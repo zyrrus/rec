@@ -12,6 +12,7 @@ import type {
   SpotifySearchResults,
   SpotifyUserProfile,
 } from "~/server/api/types/spotify-types";
+import { z } from "zod";
 
 const getAccessToken = async (
   userId: string,
@@ -66,38 +67,63 @@ export const spotifyRouter = createTRPCRouter({
     const data = (await response.json()) as SpotifyUserProfile;
     return data;
   }),
-  search: protectedProcedure.query(async ({ ctx }) => {
-    const tokenResponse = await getAccessToken(ctx.session.user.id);
-    const token = tokenResponse?.access_token;
+  search: protectedProcedure
+    .input(z.object({ query: z.string().max(128) }))
+    .query(async ({ ctx, input }) => {
+      if (input.query.length === 0) {
+        return {
+          tracks: {
+            href: "",
+            limit: 0,
+            next: null,
+            offset: 0,
+            previous: null,
+            total: 0,
+            items: [],
+          },
+          albums: {
+            href: "",
+            limit: 0,
+            next: null,
+            offset: 0,
+            previous: null,
+            total: 0,
+            items: [],
+          },
+        };
+      }
 
-    if (!token) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "Missing access token.",
-      });
-    }
+      const tokenResponse = await getAccessToken(ctx.session.user.id);
+      const token = tokenResponse?.access_token;
 
-    const params = new URLSearchParams({
-      q: "nmixx",
-      type: "album,track",
-      limit: "10",
-    }).toString();
-    const response = await fetch(
-      `https://api.spotify.com/v1/search?${params}`,
-      {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
+      if (!token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Missing access token.",
+        });
+      }
 
-    if (!response.ok) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: `Spotify API Error - status: ${response.status}`,
-      });
-    }
+      const params = new URLSearchParams({
+        q: input.query,
+        type: "album,track",
+        limit: "6",
+      }).toString();
+      const response = await fetch(
+        `https://api.spotify.com/v1/search?${params}`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
-    const data = (await response.json()) as SpotifySearchResults;
-    return data;
-  }),
+      if (!response.ok) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Spotify API Error - status: ${response.status}`,
+        });
+      }
+
+      const data = (await response.json()) as SpotifySearchResults;
+      return data;
+    }),
 });
