@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Header } from "~/app/_components/header";
 import { SpotifyProfile } from "~/app/_components/profile/spotify-profile";
-import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 
 export default async function Profile({
@@ -10,7 +9,7 @@ export default async function Profile({
 }: {
   params: { username: string };
 }) {
-  const session = await getServerAuthSession();
+  const myProfile = await api.spotify.getMe();
   const profile = await api.spotify.getUser({ userId: params.username });
 
   if (!profile) {
@@ -24,7 +23,7 @@ export default async function Profile({
         <Suspense>
           <SpotifyProfile
             profile={profile}
-            isMe={!!session && params.username === profile.id}
+            isMe={myProfile?.id === profile.id}
           />
         </Suspense>
       </div>
