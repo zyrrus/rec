@@ -18,23 +18,41 @@ export const SpotifySearch = () => {
   return (
     <Card>
       <CardContent className="space-y-6 pt-6">
-        <SearchBar handleSearchInputChange={handleSearchInputChange} />
-        <div className="space-y-3">
-          <h3 className="font-semibold leading-none tracking-tight">Albums</h3>
-          <div className="flex flex-row flex-wrap justify-between gap-6">
-            {query.data?.albums.items.map((album) => (
-              <Album key={album.id} {...album} />
-            ))}
-          </div>
-        </div>
-        <div className="space-y-3">
-          <h3 className="font-semibold leading-none tracking-tight">Tracks</h3>
-          <div className="flex flex-row flex-wrap justify-between gap-6">
-            {query.data?.tracks.items.map((track) => (
-              <Track key={track.id} {...track} />
-            ))}
-          </div>
-        </div>
+        <SearchBar
+          placeholder="Search for artists or tracks"
+          handleSearchInputChange={handleSearchInputChange}
+        />
+        {!query.data ? (
+          "loading..."
+        ) : (
+          <>
+            {query.data?.albums.items.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-semibold leading-none tracking-tight">
+                  Albums
+                </h3>
+
+                <div className="flex flex-row flex-wrap justify-between gap-6">
+                  {query.data?.albums.items.map((album) => (
+                    <Album key={album.id} {...album} />
+                  ))}
+                </div>
+              </div>
+            )}
+            {query.data?.tracks.items.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-semibold leading-none tracking-tight">
+                  Tracks
+                </h3>
+                <div className="flex flex-row flex-wrap justify-between gap-6">
+                  {query.data?.tracks.items.map((track) => (
+                    <Track key={track.id} {...track} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </CardContent>
     </Card>
   );

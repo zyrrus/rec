@@ -6,15 +6,19 @@ import { useMemo, useState } from "react";
 import debounce from "lodash.debounce";
 
 interface SearchBarProps {
+  placeholder?: string;
   handleSearchInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const SearchBar = ({ handleSearchInputChange }: SearchBarProps) => {
+export const SearchBar = ({
+  placeholder,
+  handleSearchInputChange,
+}: SearchBarProps) => {
   return (
     <div className="relative">
       <Search className="absolute left-2 top-2.5 h-4 w-4 text-stone-500 dark:placeholder:text-stone-400" />
       <Input
-        placeholder="Search"
+        placeholder={placeholder ?? "Search"}
         className="pl-8"
         onChange={handleSearchInputChange}
       />
