@@ -10,6 +10,7 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { getAccessToken } from "~/server/api/shared/spotify";
 
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
@@ -130,4 +131,24 @@ export const protectedProcedure = t.procedure
         session: { ...ctx.session, user: ctx.session.user },
       },
     });
+  });
+
+export const spotifyProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(async ({ ctx, next }) => {
+    let token: string | undefined;
+
+    if (ctx.session) {
+      const tokenResponse = await getAccessToken(ctx.session.user.id);
+      token = tokenResponse?.access_token;
+
+      if (!token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Missing Spotify access token.",
+        });
+      }
+    }
+
+    return next({ ctx: { token } });
   });
