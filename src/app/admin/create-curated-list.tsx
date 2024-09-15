@@ -32,9 +32,21 @@ import { Textarea } from "~/app/_components/ui/textarea";
 import { Checkbox } from "~/app/_components/ui/checkbox";
 import { capitalize } from "~/app/_lib/strings";
 import { monthNames } from "~/app/_lib/constants/months";
+import { api } from "~/trpc/react";
+import { toast } from "sonner";
 
 export const CreateCuratedList = () => {
   const [isOpen, onOpenChange] = useDialogControls();
+
+  const utils = api.useUtils();
+  const { mutate } = api.curator.createList.useMutation({
+    onSuccess: (_, variables) => {
+      toast.success(`Created new list: ${variables.title}`);
+      onOpenChange(false);
+      form.reset();
+      void utils.curator.getAllLists.invalidate();
+    },
+  });
 
   const form = useForm<CuratedListSchema>({
     resolver: zodResolver(curatedListSchema),
@@ -48,8 +60,7 @@ export const CreateCuratedList = () => {
 
   const onSubmit = (values: CuratedListSchema) => {
     console.log("SUBMIT", values);
-    form.reset();
-    onOpenChange(false);
+    mutate(values);
   };
 
   return (

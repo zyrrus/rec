@@ -11,7 +11,13 @@ import { curatedLists } from "~/server/db/schema";
 export const curatorRouter = createTRPCRouter({
   createList: adminProcedure
     .input(curatedListSchema)
-    .mutation(({ ctx, input }) => ctx.db.insert(curatedLists).values(input)),
+    .mutation(async ({ ctx, input }) => {
+      const formatInput = {
+        ...input,
+        contentType: Array.from(input.contentType).join(","),
+      };
+      await ctx.db.insert(curatedLists).values(formatInput);
+    }),
   getList: publicProcedure
     .input(z.object({ listId: z.number() }))
     .query(({ ctx, input }) =>

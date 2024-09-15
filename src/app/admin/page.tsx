@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { Header } from "~/app/_components/header";
 import { CreateCuratedList } from "~/app/admin/create-curated-list";
+import { CuratedList } from "~/app/admin/curated-list";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 
@@ -23,6 +25,9 @@ export default async function Admin() {
       <Header />
       <div className="flex flex-col gap-3">
         <CreateCuratedList />
+        <Suspense>
+          <CuratedList />
+        </Suspense>
       </div>
     </main>
   );
