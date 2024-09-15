@@ -10,6 +10,7 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { checkIsAdmin } from "~/server/api/shared/admin";
 import { getAccessToken } from "~/server/api/shared/spotify";
 
 import { getServerAuthSession } from "~/server/auth";
@@ -132,6 +133,16 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+  const isAdmin = await checkIsAdmin(ctx.session.user.id);
+
+  if (!isAdmin) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  return next();
+});
 
 export const spotifyProcedure = t.procedure
   .use(timingMiddleware)
