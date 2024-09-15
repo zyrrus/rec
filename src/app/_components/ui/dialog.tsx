@@ -120,3 +120,10 @@ export {
   DialogTitle,
   DialogDescription,
 };
+
+export const useDialogControls = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const onOpenChange = (open: boolean) => setIsOpen(open);
+
+  return [isOpen, onOpenChange] as const;
+};
