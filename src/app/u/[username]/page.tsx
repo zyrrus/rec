@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Header } from "~/app/_components/header";
-import { SpotifyProfile } from "~/app/_components/profile/spotify-profile";
+import { CreateNewList } from "~/app/u/[username]/create-new-list";
+import { SpotifyProfile } from "~/app/u/[username]/spotify-profile";
 import { api } from "~/trpc/server";
 
 export default async function Profile({
@@ -26,6 +27,8 @@ export default async function Profile({
             isMe={myProfile?.id === profile.id}
           />
         </Suspense>
+        <CreateNewList />
+        {/* <Suspense></Suspense> */}
       </div>
     </main>
   );

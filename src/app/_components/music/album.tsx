@@ -1,4 +1,4 @@
-import { SpotifyItem } from "~/app/_components/spotify-item";
+import { SpotifyItem } from "~/app/_components/music/spotify-item";
 import { type Album as AlbumProps } from "~/server/api/types/spotify-types";
 
 export const Album = ({ name, artists, images, external_urls }: AlbumProps) => {
