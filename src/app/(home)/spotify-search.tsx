@@ -27,12 +27,14 @@ export const SpotifySearch = () => {
       </Card>
 
       {!query.data ? (
-        <Card>
-          <CardContent className="animate-pulse pt-6">loading...</CardContent>
-        </Card>
+        searchQuery.length > 0 && (
+          <Card>
+            <CardContent className="animate-pulse pt-6">loading...</CardContent>
+          </Card>
+        )
       ) : (
         <>
-          {query.data?.albums.items.length > 0 && (
+          {query.data.albums.items.length > 0 && (
             <Card>
               <CardContent className="space-y-3 pt-6">
                 <h3 className="font-semibold leading-none tracking-tight">
@@ -40,7 +42,7 @@ export const SpotifySearch = () => {
                 </h3>
 
                 <div className="flex flex-row flex-wrap justify-between gap-6">
-                  {query.data?.albums.items.map((album) => (
+                  {query.data.albums.items.map((album) => (
                     <Album key={album.id} {...album} />
                   ))}
                 </div>
@@ -48,14 +50,14 @@ export const SpotifySearch = () => {
             </Card>
           )}
 
-          {query.data?.tracks.items.length > 0 && (
+          {query.data.tracks.items.length > 0 && (
             <Card>
               <CardContent className="space-y-3 pt-6">
                 <h3 className="font-semibold leading-none tracking-tight">
                   Tracks
                 </h3>
                 <div className="flex flex-row flex-wrap justify-between gap-6">
-                  {query.data?.tracks.items.map((track) => (
+                  {query.data.tracks.items.map((track) => (
                     <Track key={track.id} {...track} />
                   ))}
                 </div>
