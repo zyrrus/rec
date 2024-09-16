@@ -20,7 +20,7 @@ export const SpotifySearch = () => {
       <Card>
         <CardContent className="pt-6">
           <SearchBar
-            placeholder="Search for artists or tracks"
+            placeholder="Search for albums, songs, or artists"
             handleSearchInputChange={handleSearchInputChange}
           />
         </CardContent>
