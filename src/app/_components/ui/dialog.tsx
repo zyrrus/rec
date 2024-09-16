@@ -127,3 +127,20 @@ export const useDialogControls = () => {
 
   return [isOpen, onOpenChange] as const;
 };
+
+export const useDialogListControls = () => {
+  const [openDialogId, setOpenDialogId] = React.useState<number | null>(null);
+  const handleDialogOpen = (id: number) => {
+    setOpenDialogId(id);
+    console.log("OPENING", id);
+  };
+
+  const handleDialogClose = (isOpen?: boolean) => {
+    if (isOpen) return;
+
+    setOpenDialogId(null);
+    console.log("CLOSING");
+  };
+
+  return { openDialogId, handleDialogOpen, handleDialogClose };
+};

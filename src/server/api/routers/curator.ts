@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { curatedListSchema } from "~/server/api/shared/curator";
 import {
@@ -18,16 +18,29 @@ export const curatorRouter = createTRPCRouter({
       };
       await ctx.db.insert(curatedLists).values(formatInput);
     }),
+  getAllLists: publicProcedure.query(({ ctx }) =>
+    ctx.db.query.curatedLists.findMany({
+      orderBy: curatedLists.title,
+      where: isNull(curatedLists.deletedAt),
+    }),
+  ),
   getList: publicProcedure
     .input(z.object({ listId: z.number() }))
     .query(({ ctx, input }) =>
       ctx.db.query.curatedLists.findFirst({
-        where: eq(curatedLists.id, input.listId),
+        where: and(
+          eq(curatedLists.id, input.listId),
+          isNull(curatedLists.deletedAt),
+        ),
       }),
     ),
-  getAllLists: publicProcedure.query(({ ctx }) =>
-    ctx.db.query.curatedLists.findMany({ orderBy: curatedLists.title }),
-  ),
   //   updateList: adminProcedure.input(listSchema).query(({ ctx, input }) => {}),
-  //   deleteList: adminProcedure.query(({ ctx }) => {}),
+  deleteList: adminProcedure
+    .input(z.object({ listId: z.number() }))
+    .mutation(({ ctx, input }) =>
+      ctx.db
+        .update(curatedLists)
+        .set({ deletedAt: new Date() })
+        .where(eq(curatedLists.id, input.listId)),
+    ),
 });

@@ -6,5 +6,6 @@ export const curatedLists = createTable("curated_list", {
   title: text("title").notNull(),
   description: text("description"),
   length: integer("length", { mode: "number" }).notNull(),
-  contentType: text("contentType").notNull(), // Comma separated list of contentTypes
+  contentType: text("content_type").notNull(), // Comma separated list of contentTypes
+  deletedAt: integer("deleted_at", { mode: "timestamp" }), // Soft delete
 });
