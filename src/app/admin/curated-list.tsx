@@ -19,28 +19,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  useDialogListControls,
+  useDialogControls,
 } from "~/app/_components/ui/dialog";
 import { api } from "~/trpc/react";
 
 export const CuratedList = () => {
-  const { openDialogId, handleDialogOpen, handleDialogClose } =
-    useDialogListControls();
-
-  const utils = api.useUtils();
   const query = api.curator.getAllLists.useQuery();
-  const { mutate } = api.curator.deleteList.useMutation({
-    onSuccess: () => {
-      toast.success("Successfully deleted list.");
-      handleDialogClose();
-      void utils.curator.getAllLists.invalidate();
-    },
-  });
-
-  const handleDelete = (listId: number) => {
-    console.log("DELETE", listId);
-    mutate({ listId });
-  };
 
   const formatContentDescription = (contentType: string, length: number) => {
     let types = contentType.split(",");
@@ -64,44 +48,61 @@ export const CuratedList = () => {
           </CardHeader>
           {list.description && <CardContent>{list.description}</CardContent>}
           <CardFooter className="flex-row-reverse gap-3">
-            <Button>Update</Button>
-            <Dialog
-              open={openDialogId === list.id}
-              onOpenChange={handleDialogClose}
-            >
-              <DialogTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => handleDialogOpen(list.id)}
-                >
-                  Delete
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Are you sure?</DialogTitle>
-                  <DialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    this list.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="ghost">Cancel</Button>
-                  </DialogClose>
-                  <Button
-                    variant="destructive"
-                    onClick={() => handleDelete(list.id)}
-                  >
-                    Delete
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <UpdateButton />
+            <DeleteButton id={list.id} />
           </CardFooter>
         </Card>
       ))}
     </>
+  );
+};
+
+const UpdateButton = () => {
+  // TODO:
+  return <Button disabled>Update</Button>;
+};
+
+const DeleteButton = ({ id }: { id: number }) => {
+  const [isOpen, onOpenChange] = useDialogControls();
+
+  const utils = api.useUtils();
+  const { mutate } = api.curator.deleteList.useMutation({
+    onSuccess: () => {
+      toast.success("Successfully deleted list.");
+      onOpenChange(false);
+      void utils.curator.getAllLists.invalidate();
+    },
+  });
+
+  const handleDelete = () => {
+    console.log("DELETE", id);
+    mutate({ listId: id });
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>
+        <Button type="button" variant="ghost">
+          Delete
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Are you sure?</DialogTitle>
+          <DialogDescription>
+            This action cannot be undone. This will permanently delete this
+            list.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="ghost">Cancel</Button>
+          </DialogClose>
+          <Button variant="destructive" onClick={handleDelete}>
+            Delete
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
