@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ShareButton } from "~/app/_components/share-button";
 import {
   Avatar,
   AvatarImage,
@@ -34,9 +35,10 @@ export const SpotifyProfile = async ({
           {profile ? `Howdy, ${profile.display_name}!` : "Welcome!"}
         </CardTitle>
         <CardDescription>
-          {profile ? "Optional message" : "Sign in to start sharing music"}
+          {profile ? `@${profile.id}` : "Sign in to start sharing music"}
         </CardDescription>
       </div>
+      <ShareButton />
       {isMe && (
         <Button asChild>
           <Link href={session ? "/api/auth/signout" : "/api/auth/signin"}>
