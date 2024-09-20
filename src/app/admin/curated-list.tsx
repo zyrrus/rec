@@ -1,15 +1,8 @@
 "use client";
 
 import { toast } from "sonner";
+import { CuratedListCard } from "~/app/_components/curated-list-card";
 import { Button } from "~/app/_components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/app/_components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -26,35 +19,18 @@ import { api } from "~/trpc/react";
 export const CuratedList = () => {
   const query = api.curator.getAllLists.useQuery();
 
-  const formatContentDescription = (contentType: string, length: number) => {
-    let types = contentType.split(",");
-
-    if (length > 1) {
-      types = types.map((item) => `${item}s`);
-    }
-
-    return `${length} ${types.join("/")}`;
-  };
-
-  return (
-    <>
-      {query.data?.map((list) => (
-        <Card key={list.id}>
-          <CardHeader className="flex-row items-baseline justify-between gap-2 space-y-0">
-            <CardTitle>{list.title}</CardTitle>
-            <CardDescription>
-              {formatContentDescription(list.contentType, list.length)}
-            </CardDescription>
-          </CardHeader>
-          {list.description && <CardContent>{list.description}</CardContent>}
-          <CardFooter className="flex-row-reverse gap-3">
-            <UpdateButton />
-            <DeleteButton id={list.id} />
-          </CardFooter>
-        </Card>
-      ))}
-    </>
-  );
+  return query.data?.map((list) => (
+    <CuratedListCard
+      key={list.id}
+      {...list}
+      actions={
+        <>
+          <UpdateButton />
+          <DeleteButton id={list.id} />
+        </>
+      }
+    />
+  ));
 };
 
 const UpdateButton = () => {

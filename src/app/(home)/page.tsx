@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { SpotifySearch } from "~/app/(home)/spotify-search";
+import { SpotifySearch } from "~/app/_components/music/spotify-search";
 import { Header } from "~/app/_components/header";
 
 export default async function Home() {
