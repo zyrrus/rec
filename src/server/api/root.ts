@@ -1,6 +1,7 @@
 import { adminRouter } from "~/server/api/routers/admin";
 import { curatorRouter } from "~/server/api/routers/curator";
 import { spotifyRouter } from "~/server/api/routers/spotify";
+import { userListRouter } from "~/server/api/routers/user-lists";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   spotify: spotifyRouter,
   admin: adminRouter,
   curator: curatorRouter,
+  userLists: userListRouter,
 });
 
 // export type definition of API

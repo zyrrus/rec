@@ -17,18 +17,25 @@ export default async function Profile({
     redirect("/");
   }
 
+  const isMe = myProfile?.id === profile.id;
+
+  const myLists = await api.userLists.getAllListsByUser();
+
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-12 px-3 py-12 sm:px-6">
       <Header />
       <div className="flex flex-col gap-3">
         <Suspense>
-          <SpotifyProfile
-            profile={profile}
-            isMe={myProfile?.id === profile.id}
-          />
+          <SpotifyProfile profile={profile} isMe={isMe} />
         </Suspense>
-        <CreateNewList />
-        {/* <Suspense></Suspense> */}
+        {isMe && (
+          <>
+            <CreateNewList />
+            <code>
+              <pre>{JSON.stringify(myLists, undefined, 2)}</pre>
+            </code>
+          </>
+        )}
       </div>
     </main>
   );
