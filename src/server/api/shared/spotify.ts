@@ -1,13 +1,12 @@
-import { eq } from "drizzle-orm";
 import { env } from "~/env";
 import { db } from "~/server/db";
-import { accounts } from "~/server/db/schema";
 
 export const getAccessToken = async (
   userId: string,
 ): Promise<{ access_token: string } | undefined> => {
-  const account = await db.query.accounts.findFirst({
-    where: eq(accounts.userId, userId),
+  const account = await db.account.findFirst({
+    where: { userId },
+    select: { refresh_token: true },
   });
 
   if (account) {
