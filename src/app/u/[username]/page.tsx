@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Header } from "~/app/_components/header";
 import { CreateNewList } from "~/app/u/[username]/create-new-list";
 import { SpotifyProfile } from "~/app/u/[username]/spotify-profile";
+import { ProfileLists } from "~/app/u/[username]/profile-lists";
 import { api } from "~/trpc/server";
 
 export default async function Profile({
@@ -19,8 +20,6 @@ export default async function Profile({
 
   const isMe = myProfile?.id === profile.id;
 
-  const myLists = await api.userLists.getAllListsByUser();
-
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-12 px-3 py-12 sm:px-6">
       <Header />
@@ -28,14 +27,8 @@ export default async function Profile({
         <Suspense>
           <SpotifyProfile profile={profile} isMe={isMe} />
         </Suspense>
-        {isMe && (
-          <>
-            <CreateNewList />
-            <code>
-              <pre>{JSON.stringify(myLists, undefined, 2)}</pre>
-            </code>
-          </>
-        )}
+        {isMe && <CreateNewList />}
+        <ProfileLists />
       </div>
     </main>
   );

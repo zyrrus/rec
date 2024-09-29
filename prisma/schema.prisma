@@ -109,6 +109,7 @@ model Content {
   artist            String
   image_url         String
   external_url      String
+  content_type      String
 
   @@map("rec_content")
 }

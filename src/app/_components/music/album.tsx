@@ -1,12 +1,12 @@
-import { SpotifyItem } from "~/app/_components/music/spotify-item";
+import { ContentItem } from "~/app/_components/music/content-item";
 import { type Album as AlbumProps } from "~/server/api/types/spotify-types";
 
 export const Album = ({ name, artists, images, external_urls }: AlbumProps) => {
   return (
-    <SpotifyItem
+    <ContentItem
       name={name}
-      artists={artists.map(({ name }) => name)}
-      image={images[1]?.url}
+      artist={artists.map(({ name }) => name).join(", ")}
+      image_url={images[1]!.url}
       external_url={external_urls.spotify}
     />
   );

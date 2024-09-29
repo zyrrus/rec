@@ -22,30 +22,23 @@ import { Separator } from "~/app/_components/ui/separator";
 import { api } from "~/trpc/react";
 
 export const CreateNewList = () => {
-  const query = api.userLists.getUnusedListsByUser.useQuery();
-
-  const [selectedListId, setSelectedListId] = useState<string | undefined>();
-  const handleCancel = () => setSelectedListId(undefined);
-  const handleSubmit = () => {
-    // TODO: Run mutation
-    console.log("SELECTED", selectedListId);
-
-    setSelectedListId(undefined);
-  };
-
-  const selectedList =
-    !query.isLoading && selectedListId
-      ? query.data?.find(({ id }) => `${id}` === selectedListId)
-      : undefined;
+  const {
+    isLoading,
+    selectOptions,
+    selectedListId,
+    setSelectedListId,
+    selectedList,
+    handleSubmit,
+    handleCancel,
+  } = useListSelect();
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Start a new list</CardTitle>
         <CardDescription>
-          Choose a list template created by the{" "}
-          <span className="font-semibold">rec</span> team, add songs and albums,
-          and share with friends.
+          Add a new list template to your profile to start sharing songs and
+          albums with your friends.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -58,10 +51,10 @@ export const CreateNewList = () => {
             <SelectValue placeholder="Select a list template" />
           </SelectTrigger>
           <SelectContent>
-            {query.isLoading ? (
+            {isLoading ? (
               <Loader2 className="mx-auto my-1 animate-spin text-stone-300 dark:text-stone-700" />
             ) : (
-              query.data?.map(({ id, title }) => (
+              selectOptions?.map(({ id, title }) => (
                 <SelectItem key={id} value={`${id}`}>
                   {title}
                 </SelectItem>
@@ -94,4 +87,37 @@ export const CreateNewList = () => {
       </CardFooter>
     </Card>
   );
+};
+
+const useListSelect = () => {
+  const utils = api.useUtils();
+  const query = api.userLists.getUnusedListsByUser.useQuery();
+  const { mutate } = api.userLists.selectNewList.useMutation({
+    onSuccess: () => {
+      setSelectedListId(undefined);
+      void utils.userLists.getUnusedListsByUser.invalidate();
+      void utils.userLists.getAllListsByUser.invalidate();
+    },
+  });
+
+  const [selectedListId, setSelectedListId] = useState<string | undefined>();
+
+  const handleCancel = () => setSelectedListId(undefined);
+  const handleSubmit = () => {
+    if (selectedListId === undefined) return;
+    mutate({ list_template_id: Number(selectedListId) });
+  };
+
+  return {
+    isLoading: query.isLoading,
+    selectOptions: query.data,
+    selectedListId,
+    setSelectedListId,
+    selectedList:
+      !query.isLoading && selectedListId
+        ? query.data?.find(({ id }) => `${id}` === selectedListId)
+        : undefined,
+    handleSubmit,
+    handleCancel,
+  };
 };
