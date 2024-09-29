@@ -22,7 +22,7 @@ import { Separator } from "~/app/_components/ui/separator";
 import { api } from "~/trpc/react";
 
 export const CreateNewList = () => {
-  const query = api.curator.getAllLists.useQuery();
+  const query = api.userLists.getUnusedListsByUser.useQuery();
 
   const [selectedListId, setSelectedListId] = useState<string | undefined>();
   const handleCancel = () => setSelectedListId(undefined);

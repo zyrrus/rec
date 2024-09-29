@@ -45,7 +45,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  user_role     UserRole[]
+  roles         UserRole[]
+  lists         UserList[]
 
   @@map("rec_user")
 }
@@ -75,7 +76,7 @@ model ListTemplate {
   length       Int
   content_type String
   deleted_at   DateTime?
-  user_list    UserList[]
+  user_lists   UserList[]
 
   @@map("rec_list_template")
 }
@@ -85,6 +86,8 @@ model UserList {
   list_template    ListTemplate      @relation(fields: [list_template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   list_template_id Int
   contents         UserListContent[]
+  user             User              @relation(fields: [user_id], references: [id])
+  user_id          String
 
   @@map("rec_user_list")
 }
