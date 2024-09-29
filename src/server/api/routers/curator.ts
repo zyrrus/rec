@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { curatedListSchema } from "~/server/api/shared/curator";
+import { listTemplateSchema } from "~/server/api/shared/curator";
 import {
   adminProcedure,
   createTRPCRouter,
@@ -8,9 +8,9 @@ import {
 
 export const curatorRouter = createTRPCRouter({
   createList: adminProcedure
-    .input(curatedListSchema)
+    .input(listTemplateSchema)
     .mutation(({ ctx, input }) =>
-      ctx.db.curatedList.create({
+      ctx.db.listTemplate.create({
         data: {
           title: input.title,
           description: input.description,
@@ -20,7 +20,7 @@ export const curatorRouter = createTRPCRouter({
       }),
     ),
   getAllLists: publicProcedure.query(({ ctx }) =>
-    ctx.db.curatedList.findMany({
+    ctx.db.listTemplate.findMany({
       orderBy: { title: "desc" },
       where: { deleted_at: null },
     }),
@@ -28,7 +28,7 @@ export const curatorRouter = createTRPCRouter({
   getList: publicProcedure
     .input(z.object({ listId: z.number() }))
     .query(({ ctx, input }) =>
-      ctx.db.curatedList.findFirst({
+      ctx.db.listTemplate.findFirst({
         where: {
           AND: {
             deleted_at: null,
@@ -41,7 +41,7 @@ export const curatorRouter = createTRPCRouter({
   deleteList: adminProcedure
     .input(z.object({ listId: z.number() }))
     .mutation(({ ctx, input }) =>
-      ctx.db.curatedList.update({
+      ctx.db.listTemplate.update({
         where: { id: input.listId },
         data: {
           deleted_at: new Date(),

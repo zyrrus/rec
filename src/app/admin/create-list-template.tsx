@@ -15,8 +15,8 @@ import {
 } from "~/app/_components/ui/dialog";
 import {
   contentTypes,
-  curatedListSchema,
-  type CuratedListSchema,
+  listTemplateSchema,
+  type ListTemplateSchema,
 } from "~/server/api/shared/curator";
 import {
   Form,
@@ -35,7 +35,7 @@ import { monthNames } from "~/app/_lib/constants/months";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 
-export const CreateCuratedList = () => {
+export const CreateListTemplate = () => {
   const [isOpen, onOpenChange] = useDialogControls();
 
   const utils = api.useUtils();
@@ -48,8 +48,8 @@ export const CreateCuratedList = () => {
     },
   });
 
-  const form = useForm<CuratedListSchema>({
-    resolver: zodResolver(curatedListSchema),
+  const form = useForm<ListTemplateSchema>({
+    resolver: zodResolver(listTemplateSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -58,7 +58,7 @@ export const CreateCuratedList = () => {
     },
   });
 
-  const onSubmit = (values: CuratedListSchema) => {
+  const onSubmit = (values: ListTemplateSchema) => {
     console.log("SUBMIT", values);
     mutate(values);
   };
@@ -72,7 +72,7 @@ export const CreateCuratedList = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <DialogHeader>
-              <DialogTitle>Create new curated list</DialogTitle>
+              <DialogTitle>Create new list template</DialogTitle>
               <DialogDescription>
                 This will create a list template that all users will be able to
                 see and use in their own profiles.

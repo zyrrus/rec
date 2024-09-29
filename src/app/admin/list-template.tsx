@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import { CuratedListCard } from "~/app/_components/curated-list-card";
+import { ListTemplateCard } from "~/app/_components/curated-list-card";
 import { Button } from "~/app/_components/ui/button";
 import {
   Dialog,
@@ -16,11 +16,11 @@ import {
 } from "~/app/_components/ui/dialog";
 import { api } from "~/trpc/react";
 
-export const CuratedList = () => {
+export const ListTemplate = () => {
   const query = api.curator.getAllLists.useQuery();
 
   return query.data?.map((list) => (
-    <CuratedListCard
+    <ListTemplateCard
       key={list.id}
       {...list}
       actions={

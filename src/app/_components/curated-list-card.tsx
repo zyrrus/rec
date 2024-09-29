@@ -1,4 +1,4 @@
-import { type CuratedList } from "@prisma/client";
+import { type ListTemplate } from "@prisma/client";
 import type { ReactNode, PropsWithChildren } from "react";
 import {
   Card,
@@ -19,18 +19,18 @@ const formatContentDescription = (contentType: string, length: number) => {
   return `${length} ${types.join("/")}`;
 };
 
-interface CuratedListCardProps
+interface ListTemplateCardProps
   extends PropsWithChildren<
-    Pick<CuratedList, "title" | "content_type" | "length" | "description">
+    Pick<ListTemplate, "title" | "content_type" | "length" | "description">
   > {
   actions?: ReactNode;
 }
 
-export const CuratedListCard = ({
+export const ListTemplateCard = ({
   children,
   actions,
   ...list
-}: CuratedListCardProps) => {
+}: ListTemplateCardProps) => {
   return (
     <Card>
       <CardHeader className="flex-row items-baseline justify-between gap-2 space-y-0">
